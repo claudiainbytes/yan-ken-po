@@ -1,0 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Actor&family=Montserrat:wght@400;500&family=Nunito:wght@300;500&display=swap');
+@import url("./assets/fonts/permanent-marker/stylesheet.css");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    @apply bg-primary text-white
+}
+
+.slotpot {
+    @apply relative w-[220px] h-[220px] flex flex-col justify-end items-center overflow-hidden
+} 
+.slotpot_container {
+    @apply absolute w-full h-auto flex flex-col justify-end items-center top-0 transition ease-linear
+} 
+.slotpot_image {
+    @apply w-full h-auto bg-no-repeat bg-center bg-cover 
+}
+.slotpot_player {
+    @apply text-4xl font-permanentmarker text-yellow-300 uppercase mt-5
+}    
+.slotpot_score {
+    @apply text-4xl font-permanentmarker text-blue-300 uppercase mt-5
+} 
