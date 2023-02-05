@@ -1,6 +1,7 @@
 <script lang="ts">
 
 import { propsToAttrMap } from '@vue/shared';
+import store from '../store'
 import { defineComponent } from 'vue'
 
 export default defineComponent({
@@ -24,17 +25,12 @@ export default defineComponent({
         score: {
             type: Number,
             default: 0
-        },
-        playButtonState: {
-            type: Boolean,
-            default: false
         }
     },
     setup(props) {
         props.id,
         props.player,
-        props.score,
-        props.playButtonState
+        props.score
     },
     methods:{
         shuffleObjects(array: Array<{ img: string }>) {
@@ -51,6 +47,7 @@ export default defineComponent({
             }
         },
         moveSlotPot(id: string, imgSlot: Array<{ img: string }>) {
+
             imgSlot = this.shuffleObjects(imgSlot);
             const rollIntervalTime: number = 180;
             let parentImgSlot: HTMLElement | null | any;
@@ -74,12 +71,7 @@ export default defineComponent({
                     newItemSlot.classList.add('slotpot_image');
                     newItemSlot.classList.add(imgSlot[i].img);
                     newItemSlot.setAttribute('style','height: ' + heightSlotpot + 'px');     
-                    if (parentImgSlot.hasChildNodes()) {
-                        prevImgSlot = currentImgSlot;
-                        prevImgSlot.classList.remove('slotpot_current');
-                    }
                     currentImgSlot = newItemSlot;
-                    currentImgSlot.classList.add('slotpot_current');
                     parentImgSlot.appendChild(currentImgSlot);
                     parentImgSlot.setAttribute('style','transform: translateY(-'+ desplazamientoY + 'px)');
                     desplazamientoY += heightSlotpot;     
@@ -102,21 +94,38 @@ export default defineComponent({
             self.cleanSlotPot(self.id);
             self.setSlotPot(self.id, self.imgSlot);
             self.moveSlotPot(self.id, self.imgSlot);
-            console.log("y aqui " + self.playButtonState);
         } 
     },
     mounted() {
         let self: any = this;
+        self.playButtonState = store.getters.playButtonState;
         self.setSlotPot(self.id, self.imgSlot);
     },
-    updated() {
-        let self: any = this;
-        //let buttonSlot: HTMLElement | null  = document.querySelector('#'+ this.id + ' button');
-        //buttonSlot?.addEventListener('click', self.playSlot());
-            self.cleanSlotPot(self.id);
-            self.setSlotPot(self.id, self.imgSlot);
-            self.moveSlotPot(self.id, self.imgSlot);
-		console.log("estado de updated " + self.playButtonState);
+    computed:{
+        playButtonState: {
+            get(): boolean {
+                return store.state.playButtonState;
+            },
+            set(value: boolean) {
+                store.state.playButtonState = value
+            }
+        }
+    },
+    watch: {
+        playButtonState(newValue, oldValue){
+            console.log("Watcher desde SlotPot: El playButtonState pasó de ser '%s' a '%s'", oldValue, newValue);
+            if(this.playButtonState){
+                let self: any = this;
+                let buttonSlot: HTMLElement | null  = document.querySelector('#'+ self.id + ' button');
+                buttonSlot?.addEventListener('click', self.playSlot());
+                if(store.state.playerComputer.name == this.player )
+                    store.dispatch('changeStateComputerAction');
+                if(store.state.playerOne.name == this.player)
+                    store.dispatch('changeStatePlayerAction');
+                store.dispatch('stopButtonAction');
+                self.cleanSlotPot(self.id);
+            }
+        }
     }
 })
 
@@ -129,7 +138,7 @@ export default defineComponent({
                 <div class="slotpot_image slotpot_image-default"></div>
             </div>
         </div>
-        <button class="hidden_" @click="playSlot">Play</button>
+        <button class="hidden" @click="playSlot">Play</button>
         <p class="slotpot_player">{{ player }}</p>
         <p class="slotpot_score">{{ score }}</p>
     </div>

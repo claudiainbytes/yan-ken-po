@@ -5,6 +5,6 @@ import YanKenPo from './components/YanKenPo.vue'
 </script>
 
 <template>
-  <YanKenPo msg="Vite + Vue" />
+  <YanKenPo/>
 </template>
 
