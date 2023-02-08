@@ -14,7 +14,6 @@ export default defineComponent({
   },
   methods:{
     playButton(event: any) {
-      store.state.playButtonState = true;
       store.dispatch('playButtonAction');
       console.log("el valor de playButtonState por ahora es: " + store.getters.playButtonState);
     }

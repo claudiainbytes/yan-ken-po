@@ -36,7 +36,7 @@ export default defineComponent({
         shuffleObjects(array: Array<{ img: string }>) {
             return array.sort(() => Math.random() - 0.5);
         },
-        setSlotPot(id: string, imgSlot: Array<{ img: string }>) {
+        setSlotPot(id: string) {
             let currentImgSlot = document.querySelector('#'+ id + ' .slotpot .slotpot_container .slotpot_image') as HTMLElement | null;
             let parentImgSlot: HTMLElement | null = document.querySelector('#'+ id + ' .slotpot .slotpot_container');
             let newItemSlot: HTMLElement | null;
@@ -89,10 +89,21 @@ export default defineComponent({
                 parentImgSlot.textContent = '';
             }
         },
+        getResultSlotPot(id: string) { 
+            let parentImgSlot: HTMLElement | null = document.querySelector('#'+ id + ' .slotpot .slotpot_container');
+            if (parentImgSlot != null) {
+                let imgSlotCollection:  NodeList  = parentImgSlot.querySelectorAll('.slotpot_image');
+                console.log("Imprime los tres resultados " + imgSlotCollection.length);
+                for (let i = 0; i < imgSlotCollection.length; i++) {
+                    console.log("cole " + i);
+                }
+            }
+            console.log("debe contar resultado")
+        },
         playSlot () {
             let self: any = this;
             self.cleanSlotPot(self.id);
-            self.setSlotPot(self.id, self.imgSlot);
+            self.setSlotPot(self.id);
             self.moveSlotPot(self.id, self.imgSlot);
         } 
     },
@@ -101,6 +112,10 @@ export default defineComponent({
         self.playButtonState = store.getters.playButtonState;
         self.setSlotPot(self.id, self.imgSlot);
     },
+    updated() {
+        let self: any = this;
+        self.getResultSlotPot(self.id);
+    }, 
     computed:{
         playButtonState: {
             get(): boolean {

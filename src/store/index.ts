@@ -11,7 +11,7 @@ const store:StoreOptions<RootState> = {
     },
     mutations: {
         playButton(state) {
-            state.playButtonState = state.playButtonState;
+            state.playButtonState = !state.playButtonState;
         },
         stopButton(state) {
             if((state.playerComputer.playSlotpot) && (state.playerOne.playSlotpot)){
