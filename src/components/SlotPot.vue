@@ -9,10 +9,11 @@ export default defineComponent({
         return  {
             imgSlotDefault: 'bg-imgAvocado',
             imgSlot: [
-                { img: 'bg-imgTijeras' },
-                { img: 'bg-imgPiedra' },
-                { img: 'bg-imgPapel' }
-            ]
+                { img: 'bg-imgTijeras', name: "Tijeras" },
+                { img: 'bg-imgPiedra', name: "Piedra" },
+                { img: 'bg-imgPapel', name: "Papel" }
+            ],
+            resultPlayer: ""
         }
     },
     props: {
@@ -33,7 +34,7 @@ export default defineComponent({
         props.score
     },
     methods:{
-        shuffleObjects(array: Array<{ img: string }>) {
+        shuffleObjects(array: Array<{ img: string, name: string }>) {
             return array.sort(() => Math.random() - 0.5);
         },
         setSlotPot(id: string) {
@@ -46,8 +47,7 @@ export default defineComponent({
                 currentImgSlot.setAttribute('style','height: ' + slotpotHeight.offsetHeight + 'px'); 
             }
         },
-        moveSlotPot(id: string, imgSlot: Array<{ img: string }>) {
-
+        moveSlotPot(id: string, imgSlot: Array<{ img: string, name: string }>, resultPlayer: string) {
             imgSlot = this.shuffleObjects(imgSlot);
             const rollIntervalTime: number = 180;
             let parentImgSlot: HTMLElement | null | any;
@@ -65,23 +65,34 @@ export default defineComponent({
                 desplazamientoY = heightSlotpot * (-1);
             }
             parentImgSlot = document.querySelector('#'+ id + ' .slotpot .slotpot_container');
+            let countImage: number = 0;
+            let maxCountImage: number = 21;
             let rollSlotPot = setInterval(function () {
-                if ( parentImgSlot != null ) {
-                    newItemSlot = document.createElement('div');
-                    newItemSlot.classList.add('slotpot_image');
-                    newItemSlot.classList.add(imgSlot[i].img);
-                    newItemSlot.setAttribute('style','height: ' + heightSlotpot + 'px');     
-                    currentImgSlot = newItemSlot;
-                    parentImgSlot.appendChild(currentImgSlot);
-                    parentImgSlot.setAttribute('style','transform: translateY(-'+ desplazamientoY + 'px)');
-                    desplazamientoY += heightSlotpot;     
-                }
-                i = i + 1;
-                if( i >= imgSlot.length) {
-                    i = 0;
-                }
+                        if ( parentImgSlot != null ) {
+                            countImage += 1;    
+                            newItemSlot = document.createElement('div');
+                            newItemSlot.classList.add('slotpot_image');
+                            newItemSlot.classList.add(imgSlot[i].img);
+                            newItemSlot.classList.add('slot_' + countImage);
+                            newItemSlot.setAttribute('style','height: ' + heightSlotpot + 'px');     
+                            currentImgSlot = newItemSlot;
+                            parentImgSlot.appendChild(currentImgSlot);
+                            parentImgSlot.setAttribute('style','transform: translateY(-'+ desplazamientoY + 'px)');
+                            desplazamientoY += heightSlotpot; 
+                        }
+                        i = i + 1;
+                        resultPlayer = (i > 0) ? imgSlot[i-1].name: "";
+                        if( i >= imgSlot.length) {
+                            i = 0;
+                        }
+                        if(countImage == (maxCountImage - 1)) {
+                            console.log("#" + id + " " + countImage + " next: " + imgSlot[i].name + " current result: " + resultPlayer );
+                            console.log("valor de " + resultPlayer + " ");
+                        }
+                        if (countImage >= maxCountImage ) {
+                            clearInterval(rollSlotPot);
+                        }
             }, rollIntervalTime);
-            setTimeout( function() { clearInterval(rollSlotPot) }, 3000);
         },
         cleanSlotPot(id: string) {
             let parentImgSlot: HTMLElement | null = document.querySelector('#'+ id + ' .slotpot .slotpot_container');
@@ -89,22 +100,11 @@ export default defineComponent({
                 parentImgSlot.textContent = '';
             }
         },
-        getResultSlotPot(id: string) { 
-            let parentImgSlot: HTMLElement | null = document.querySelector('#'+ id + ' .slotpot .slotpot_container');
-            if (parentImgSlot != null) {
-                let imgSlotCollection:  NodeList  = parentImgSlot.querySelectorAll('.slotpot_image');
-                console.log("Imprime los tres resultados " + imgSlotCollection.length);
-                for (let i = 0; i < imgSlotCollection.length; i++) {
-                    console.log("cole " + i);
-                }
-            }
-            console.log("debe contar resultado")
-        },
         playSlot () {
             let self: any = this;
             self.cleanSlotPot(self.id);
             self.setSlotPot(self.id);
-            self.moveSlotPot(self.id, self.imgSlot);
+            self.moveSlotPot(self.id, self.imgSlot, self.resultPlayer);
         } 
     },
     mounted() {
@@ -112,10 +112,6 @@ export default defineComponent({
         self.playButtonState = store.getters.playButtonState;
         self.setSlotPot(self.id, self.imgSlot);
     },
-    updated() {
-        let self: any = this;
-        self.getResultSlotPot(self.id);
-    }, 
     computed:{
         playButtonState: {
             get(): boolean {

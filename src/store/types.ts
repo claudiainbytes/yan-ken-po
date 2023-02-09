@@ -1,7 +1,8 @@
 interface Player {
     name: string;
     playSlotpot: boolean;
-    result: number;
+    result: "";
+    score: 0;
 }
 
 export interface RootState {
