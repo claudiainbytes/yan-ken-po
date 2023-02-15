@@ -34,7 +34,13 @@ export default defineComponent({
       set(value: boolean) {
         store.state.playButtonState = value
       }
-    }
+    },
+    playerComputer(): any {
+        return  store.state.playerComputer;
+    },
+    playerOne(): any {
+        return  store.state.playerOne;
+    },
   }
 })
 
@@ -44,6 +50,8 @@ export default defineComponent({
   <div class="w-full h-screen flex flex-col justify-center items-center">
     <h1>{{stateTitle}}</h1>
     <h1>Valor propiedad play buton state: {{ playButtonState }}</h1>
+    <p>Result Compu: {{ playerComputer.result }} score: {{ playerComputer.score }}</p>
+    <p>Result Player: {{ playerOne.result }} score: {{ playerOne.score }}</p>
     <h2 class="text-7xl text-pink-600 font-permanentmarker">{{ appTitle }}</h2>
     <div class="w-4/5 h-auto flex flex-row justify-center items-center my-20">
           <SlotPot player="Computer" :score="0" id="slotpot1"></SlotPot>

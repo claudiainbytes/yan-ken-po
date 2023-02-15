@@ -20,11 +20,19 @@ const store:StoreOptions<RootState> = {
                 state.playerOne.playSlotpot = false;
             }    
         },
-        changeStateComputer(state) {
+        changePlayStateComputer(state) {
             state.playerComputer.playSlotpot = true;
         },
-        changeStatePlayer(state) {
+        changePlayStatePlayer(state) {
             state.playerOne.playSlotpot = true;
+        },
+        changeStateComputer(state, data) {
+            state.playerComputer.result = data.result; 
+            state.playerComputer.score =  data.score;
+        },
+        changeStatePlayer(state, data) {
+            state.playerOne.result = data.result;  
+            state.playerOne.score = data.score; 
         }
     },
     actions: {
@@ -34,22 +42,28 @@ const store:StoreOptions<RootState> = {
         stopButtonAction(context) {
             context.commit('stopButton')
         },
-        changeStateComputerAction(context) {
-            context.commit('changeStateComputer')
+        changePlayStateComputerAction(context) {
+            context.commit('changePlayStateComputer')
         },
-        changeStatePlayerAction(context) {
-            context.commit('changeStatePlayer')
-        }
+        changePlayStatePlayerAction(context) {
+            context.commit('changePlayStatePlayer')
+        },
+        changeStateComputerAction(context, data) {
+            context.commit('changeStateComputer', data)
+        },
+        changeStatePlayerAction(context, data) {
+            context.commit('changeStatePlayer', data)
+        },
     },
     getters: {
         playButtonState(state) {
             return state.playButtonState
         },
         stateComputer(state) {
-            return state.playerComputer.playSlotpot
+            return state.playerComputer
         },
         statePlayer(state) {
-            return state.playerComputer.playSlotpot
+            return state.playerOne
         }
     }
   }

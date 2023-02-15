@@ -13,7 +13,7 @@ export default defineComponent({
                 { img: 'bg-imgPiedra', name: "Piedra" },
                 { img: 'bg-imgPapel', name: "Papel" }
             ],
-            resultPlayer: ""
+            resultPlayer: "?"
         }
     },
     props: {
@@ -47,26 +47,24 @@ export default defineComponent({
                 currentImgSlot.setAttribute('style','height: ' + slotpotHeight.offsetHeight + 'px'); 
             }
         },
-        moveSlotPot(id: string, imgSlot: Array<{ img: string, name: string }>, resultPlayer: string) {
-            imgSlot = this.shuffleObjects(imgSlot);
+        moveSlotPot(self: any) {
+            let imgSlot: Array<{ img: string, name: string }> = this.shuffleObjects(self.imgSlot);
+            let id: string = self.id;
+            let resultPlayer: string = self.resultPlayer;
             const rollIntervalTime: number = 180;
-            let parentImgSlot: HTMLElement | null | any;
+            let parentImgSlot: HTMLElement | null |any = document.querySelector('#'+ id + ' .slotpot .slotpot_container');
             let currentImgSlot = document.querySelector('#'+ id + ' .slotpot .slotpot_container .slotpot_image.slotpot_image-default') as HTMLElement | null | any;
             let slotpotHeight: HTMLElement | null =  document.querySelector('.slotpot');
             let newItemSlot: HTMLElement | null;
             let desplazamientoY: number = 0;
             let heightSlotpot: number;
             let i: number = 2;
-            let prevImgSlot: HTMLElement | null | any;
-            let nextImgSlot: HTMLElement | null | any;
-            let beforePassedImgSlot: HTMLElement | null | any;
+            let countImage: number = 0;
+            let maxCountImage: number = 21;
             if ( slotpotHeight != null ) {
                 heightSlotpot = slotpotHeight.offsetHeight;
                 desplazamientoY = heightSlotpot * (-1);
             }
-            parentImgSlot = document.querySelector('#'+ id + ' .slotpot .slotpot_container');
-            let countImage: number = 0;
-            let maxCountImage: number = 21;
             let rollSlotPot = setInterval(function () {
                         if ( parentImgSlot != null ) {
                             countImage += 1;    
@@ -86,8 +84,13 @@ export default defineComponent({
                             i = 0;
                         }
                         if(countImage == (maxCountImage - 1)) {
-                            console.log("#" + id + " " + countImage + " next: " + imgSlot[i].name + " current result: " + resultPlayer );
-                            console.log("valor de " + resultPlayer + " ");
+                            self.resultPlayer = resultPlayer;
+                            if(store.state.playerComputer.name == self.player ){
+                                store.dispatch('changeStateComputerAction', { "result": self.resultPlayer, "score": 10 });
+                            }
+                            if(store.state.playerOne.name == self.player){
+                                store.dispatch('changeStatePlayerAction', { "result": self.resultPlayer, "score": 20 });
+                            }
                         }
                         if (countImage >= maxCountImage ) {
                             clearInterval(rollSlotPot);
@@ -104,7 +107,7 @@ export default defineComponent({
             let self: any = this;
             self.cleanSlotPot(self.id);
             self.setSlotPot(self.id);
-            self.moveSlotPot(self.id, self.imgSlot, self.resultPlayer);
+            self.moveSlotPot(self);
         } 
     },
     mounted() {
@@ -118,21 +121,23 @@ export default defineComponent({
                 return store.state.playButtonState;
             },
             set(value: boolean) {
-                store.state.playButtonState = value
+                store.state.playButtonState = value;
             }
         }
     },
     watch: {
         playButtonState(newValue, oldValue){
-            console.log("Watcher desde SlotPot: El playButtonState pasó de ser '%s' a '%s'", oldValue, newValue);
-            if(this.playButtonState){
-                let self: any = this;
-                let buttonSlot: HTMLElement | null  = document.querySelector('#'+ self.id + ' button');
+            let self: any = this;
+            let buttonSlot: HTMLElement | null  = document.querySelector('#'+ self.id + ' button');
+            console.log("Watcher desde SlotPot " + self.id + ": El playButtonState pasó de ser '%s' a '%s'", oldValue, newValue);
+            if(this.playButtonState){    
                 buttonSlot?.addEventListener('click', self.playSlot());
-                if(store.state.playerComputer.name == this.player )
-                    store.dispatch('changeStateComputerAction');
-                if(store.state.playerOne.name == this.player)
-                    store.dispatch('changeStatePlayerAction');
+                if(store.state.playerComputer.name == self.player ){
+                    store.dispatch('changePlayStateComputerAction');
+                }
+                if(store.state.playerOne.name == self.player){
+                    store.dispatch('changePlayStatePlayerAction');
+                }
                 store.dispatch('stopButtonAction');
                 self.cleanSlotPot(self.id);
             }
@@ -152,6 +157,7 @@ export default defineComponent({
         <button class="hidden" @click="playSlot">Play</button>
         <p class="slotpot_player">{{ player }}</p>
         <p class="slotpot_score">{{ score }}</p>
+        <p class="slotpot_player">{{ resultPlayer }}</p>
     </div>
 </template>
 
