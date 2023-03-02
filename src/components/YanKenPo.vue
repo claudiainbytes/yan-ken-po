@@ -15,7 +15,6 @@ export default defineComponent({
   methods:{
     playButton(event: any) {
       store.dispatch('playButtonAction');
-      console.log("el valor de playButtonState por ahora es: " + store.getters.playButtonState);
     }
   },
   computed:{
@@ -46,9 +45,17 @@ export default defineComponent({
         if (this.playerComputer.result === this.playerOne.result) {
           return "It's a tie!";
         } else {
-          if ((this.playerOne.result === "Piedra" && this.playerComputer.result === "Tijeras") || (this.playerOne.result === "Papel" && this.playerComputer.result === "Piedra") || (this.playerOne.result === "Tijeras" && this.playerComputer.result === "Papel")) {
+          if ((this.playerOne.result === store.state.imgSlot[1].name && this.playerComputer.result === store.state.imgSlot[0].name) || 
+              (this.playerOne.result === store.state.imgSlot[2].name && this.playerComputer.result === store.state.imgSlot[1].name) || 
+              (this.playerOne.result === store.state.imgSlot[0].name && this.playerComputer.result === store.state.imgSlot[2].name)
+          ){   
+            store.dispatch('addPointToScorePlayerAction');
             return `You win! ${this.playerOne.result} beats ${this.playerComputer.result}.`;
-          } else if ((this.playerComputer.result === "Piedra" && this.playerOne.result === "Tijeras") || (this.playerComputer.result === "Papel" && this.playerOne.result === "Piedra") || (this.playerComputer.result === "Tijeras" && this.playerOne.result === "Papel")) {
+          } else if ((this.playerComputer.result === store.state.imgSlot[1].name && this.playerOne.result === store.state.imgSlot[0].name) || 
+                     (this.playerComputer.result === store.state.imgSlot[2].name && this.playerOne.result === store.state.imgSlot[1].name) || 
+                     (this.playerComputer.result === store.state.imgSlot[0].name && this.playerOne.result === store.state.imgSlot[2].name)) 
+          {
+            store.dispatch('addPointToScoreComputerAction');
             return `Computer win! ${this.playerComputer.result} beats ${this.playerOne.result}.`;
           }
         }
@@ -59,11 +66,8 @@ export default defineComponent({
   },
   watch: {
         playButtonState(newValue, oldValue){
-            console.log("Watcher desde Yankenpo: El playButtonState pasó de ser '%s' a '%s'", oldValue, newValue);
             if(this.playButtonState){    
               this.finalResult = "Esperando el resultado del juego";
-              console.log('this.playerComputer.playSlotpot: ' + this.playerComputer.playSlotpot)
-              console.log('this.playerOne.playSlotpot: ' + this.playerOne.playSlotpot)
             }
         }
     }
@@ -79,13 +83,13 @@ export default defineComponent({
     <p>Result Player: {{ playerOne.result }} score: {{ playerOne.score }}</p>
     <h2 class="text-7xl text-pink-600 font-permanentmarker">{{ appTitle }}</h2>
     <div class="w-4/5 h-auto flex flex-row justify-center items-center my-20">
-          <SlotPot player="Computer" :score="0" id="slotpot1"></SlotPot>
+          <SlotPot player="Computer" id="slotpot1"></SlotPot>
         <div class="w-1/3 flex flex-col justify-center items-center">
           <button class="w-auto px-10 py-2 text-3xl bg-pink-600 rounded-lg text-white font-nunito uppercase" @click="playButton">Play</button>
         </div>
-          <SlotPot player="You" :score="0" id="slotpot2"></SlotPot>
+          <SlotPot player="You" id="slotpot2"></SlotPot>
     </div>
-    <h2 class="text-7xl text-green-600 font-permanentmarker">{{ finalResult }}</h2>
+    <h2 class="text-lg text-green-600">{{ finalResult }}</h2>
   </div>
 </template>
 

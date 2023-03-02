@@ -8,12 +8,9 @@ export default defineComponent({
     data(){
         return  {
             imgSlotDefault: 'bg-imgAvocado',
-            imgSlot: [
-                { img: 'bg-imgTijeras', name: "Tijeras" },
-                { img: 'bg-imgPiedra', name: "Piedra" },
-                { img: 'bg-imgPapel', name: "Papel" }
-            ],
-            resultPlayer: "?"
+            imgSlot: [],
+            resultPlayer: "?",
+            score: 0
         }
     },
     props: {
@@ -22,18 +19,13 @@ export default defineComponent({
         },
         player: {
             type:String
-        },
-        score: {
-            type: Number,
-            default: 0
         }
     },
     setup(props) {
         props.id,
-        props.player,
-        props.score
+        props.player
     },
-    methods:{
+    methods: {
         shuffleObjects(array: Array<{ img: string, name: string }>) {
             return array.sort(() => Math.random() - 0.5);
         },
@@ -48,7 +40,7 @@ export default defineComponent({
             }
         },
         moveSlotPot(self: any) {
-            let imgSlot: Array<{ img: string, name: string }> =  this.shuffleObjects(this.imgSlot);
+            let imgSlot: Array<{ img: string, name: string }> =  this.shuffleObjects(self.imgSlot);
             let id: string = self.id;
             let resultPlayer: string = self.resultPlayer;
             const rollIntervalTime: number = 180;
@@ -86,11 +78,11 @@ export default defineComponent({
                         if(countImage == (maxCountImage - 1)) {
                             self.resultPlayer = resultPlayer;
                             if(store.state.playerComputer.name == self.player ){
-                                store.dispatch('changeStateComputerAction', { "result": self.resultPlayer, "score": 10, "playSlotpot": true });
+                                store.dispatch('changeStateComputerAction', { "result": self.resultPlayer, "playSlotpot": true });
                                 //console.log('res Comp 90: ' + self.playerComputer.result + " , " + self.playerComputer.playSlotpot);
                             }
                             if(store.state.playerOne.name == self.player){
-                                store.dispatch('changeStatePlayerAction', { "result": self.resultPlayer, "score": 20, "playSlotpot": true });
+                                store.dispatch('changeStatePlayerAction', { "result": self.resultPlayer, "playSlotpot": true });
                                 //console.log('res Player 94: ' + self.playerOne.result + " , " + self.playerOne.playSlotpot);
                             }
                             store.dispatch('stopButtonAction');
@@ -113,11 +105,9 @@ export default defineComponent({
             self.moveSlotPot(self);
         } 
     },
-    create() {
-        this.imgSlot = store.state.imgSlot;
-    },
     mounted() {
         let self: any = this;
+        self.imgSlot = [...store.getters.imgSlot];
         self.setSlotPot(self.id);
     },
     computed:{
@@ -143,6 +133,12 @@ export default defineComponent({
             if(this.playButtonState){    
                 buttonSlot?.addEventListener('click', self.playSlot());
                 self.cleanSlotPot(self.id);
+                if(store.state.playerOne.name == self.player) {
+                    self.score = store.state.playerOne.score;
+                }
+                if(store.state.playerComputer.name == self.player) {
+                    self.score = store.state.playerComputer.score;
+                }
             }
         }
     }
@@ -161,12 +157,6 @@ export default defineComponent({
         <p class="slotpot_player">{{ player }}</p>
         <p class="slotpot_score">{{ score }}</p>
         <p class="slotpot_player">{{ resultPlayer }}</p>
-        <p>
-            <span v-for="itemImgSlot in imgSlot">
-                {{ itemImgSlot.name }} &nbsp;
-            </span>
-        </p>
-
     </div>
 </template>
 

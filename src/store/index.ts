@@ -9,9 +9,9 @@ const store:StoreOptions<RootState> = {
         playerComputer: { name: "Computer", playSlotpot: false, result: "", score: 0 },
         playerOne: { name: "You", playSlotpot: false, result: "", score: 0 },
         imgSlot: [
-            {  name: "Tijeras", img: 'bg-imgTijeras' },
-            {  name: "Piedra", img: 'bg-imgPiedra' },
-            {  name: "Papel", img: 'bg-imgPapel' }
+            {  name: "Scissors", img: 'bg-imgTijeras' },
+            {  name: "Rock", img: 'bg-imgPiedra' },
+            {  name: "Paper", img: 'bg-imgPapel' }
         ],
     },
     mutations: {
@@ -20,7 +20,6 @@ const store:StoreOptions<RootState> = {
         },
         stopButton(state) {
             if((state.playerComputer.playSlotpot) && (state.playerOne.playSlotpot)){
-                console.log('linea 17,  res Player: ' + state.playerOne.playSlotpot + " res Comp: " + state.playerComputer.playSlotpot);
                 state.playButtonState = false;
                 state.playerComputer.playSlotpot = false;
                 state.playerOne.playSlotpot = false;
@@ -28,14 +27,18 @@ const store:StoreOptions<RootState> = {
         },
         changeStateComputer(state, data) {
             state.playerComputer.result = data.result; 
-            state.playerComputer.score =  data.score;
             state.playerComputer.playSlotpot = data.playSlotpot;
         },
         changeStatePlayer(state, data) {
             state.playerOne.result = data.result;  
-            state.playerOne.score = data.score; 
             state.playerOne.playSlotpot = data.playSlotpot;
-        }
+        },
+        addPointToScorePlayer(state){
+            state.playerOne.score++;
+        },
+        addPointToScoreComputer(state){
+            state.playerComputer.score++;
+        },
     },
     actions: {
         playButtonAction(context) {
@@ -49,7 +52,13 @@ const store:StoreOptions<RootState> = {
         },
         changeStatePlayerAction(context, data) {
             context.commit('changeStatePlayer', data)
-        }
+        },
+        addPointToScorePlayerAction(context) {
+            context.commit('addPointToScorePlayer')
+        },
+        addPointToScoreComputerAction(context) {
+            context.commit('addPointToScoreComputer')
+        },
     },
     getters: {
         playButtonState(state) {
