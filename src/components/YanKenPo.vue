@@ -41,7 +41,32 @@ export default defineComponent({
     playerOne(): any {
         return  store.state.playerOne;
     },
-  }
+    finalResult(): any {
+      if((this.playerComputer.result !== "") && (this.playerOne.result !== "")){
+        if (this.playerComputer.result === this.playerOne.result) {
+          return "It's a tie!";
+        } else {
+          if ((this.playerOne.result === "Piedra" && this.playerComputer.result === "Tijeras") || (this.playerOne.result === "Papel" && this.playerComputer.result === "Piedra") || (this.playerOne.result === "Tijeras" && this.playerComputer.result === "Papel")) {
+            return `You win! ${this.playerOne.result} beats ${this.playerComputer.result}.`;
+          } else if ((this.playerComputer.result === "Piedra" && this.playerOne.result === "Tijeras") || (this.playerComputer.result === "Papel" && this.playerOne.result === "Piedra") || (this.playerComputer.result === "Tijeras" && this.playerOne.result === "Papel")) {
+            return `Computer win! ${this.playerComputer.result} beats ${this.playerOne.result}.`;
+          }
+        }
+      } else {
+        return "";
+      }
+    }
+  },
+  watch: {
+        playButtonState(newValue, oldValue){
+            console.log("Watcher desde Yankenpo: El playButtonState pasó de ser '%s' a '%s'", oldValue, newValue);
+            if(this.playButtonState){    
+              this.finalResult = "Esperando el resultado del juego";
+              console.log('this.playerComputer.playSlotpot: ' + this.playerComputer.playSlotpot)
+              console.log('this.playerOne.playSlotpot: ' + this.playerOne.playSlotpot)
+            }
+        }
+    }
 })
 
 </script>
@@ -60,6 +85,7 @@ export default defineComponent({
         </div>
           <SlotPot player="You" :score="0" id="slotpot2"></SlotPot>
     </div>
+    <h2 class="text-7xl text-green-600 font-permanentmarker">{{ finalResult }}</h2>
   </div>
 </template>
 

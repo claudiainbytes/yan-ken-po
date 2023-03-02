@@ -48,7 +48,7 @@ export default defineComponent({
             }
         },
         moveSlotPot(self: any) {
-            let imgSlot: Array<{ img: string, name: string }> = this.shuffleObjects(self.imgSlot);
+            let imgSlot: Array<{ img: string, name: string }> =  this.shuffleObjects(this.imgSlot);
             let id: string = self.id;
             let resultPlayer: string = self.resultPlayer;
             const rollIntervalTime: number = 180;
@@ -86,11 +86,14 @@ export default defineComponent({
                         if(countImage == (maxCountImage - 1)) {
                             self.resultPlayer = resultPlayer;
                             if(store.state.playerComputer.name == self.player ){
-                                store.dispatch('changeStateComputerAction', { "result": self.resultPlayer, "score": 10 });
+                                store.dispatch('changeStateComputerAction', { "result": self.resultPlayer, "score": 10, "playSlotpot": true });
+                                //console.log('res Comp 90: ' + self.playerComputer.result + " , " + self.playerComputer.playSlotpot);
                             }
                             if(store.state.playerOne.name == self.player){
-                                store.dispatch('changeStatePlayerAction', { "result": self.resultPlayer, "score": 20 });
+                                store.dispatch('changeStatePlayerAction', { "result": self.resultPlayer, "score": 20, "playSlotpot": true });
+                                //console.log('res Player 94: ' + self.playerOne.result + " , " + self.playerOne.playSlotpot);
                             }
+                            store.dispatch('stopButtonAction');
                         }
                         if (countImage >= maxCountImage ) {
                             clearInterval(rollSlotPot);
@@ -110,10 +113,12 @@ export default defineComponent({
             self.moveSlotPot(self);
         } 
     },
+    create() {
+        this.imgSlot = store.state.imgSlot;
+    },
     mounted() {
         let self: any = this;
-        self.playButtonState = store.getters.playButtonState;
-        self.setSlotPot(self.id, self.imgSlot);
+        self.setSlotPot(self.id);
     },
     computed:{
         playButtonState: {
@@ -123,22 +128,20 @@ export default defineComponent({
             set(value: boolean) {
                 store.state.playButtonState = value;
             }
+        },
+        playerComputer(): any {
+            return  store.state.playerComputer;
+        },
+        playerOne(): any {
+            return  store.state.playerOne;
         }
     },
     watch: {
         playButtonState(newValue, oldValue){
             let self: any = this;
             let buttonSlot: HTMLElement | null  = document.querySelector('#'+ self.id + ' button');
-            console.log("Watcher desde SlotPot " + self.id + ": El playButtonState pasó de ser '%s' a '%s'", oldValue, newValue);
             if(this.playButtonState){    
                 buttonSlot?.addEventListener('click', self.playSlot());
-                if(store.state.playerComputer.name == self.player ){
-                    store.dispatch('changePlayStateComputerAction');
-                }
-                if(store.state.playerOne.name == self.player){
-                    store.dispatch('changePlayStatePlayerAction');
-                }
-                store.dispatch('stopButtonAction');
                 self.cleanSlotPot(self.id);
             }
         }
@@ -158,6 +161,12 @@ export default defineComponent({
         <p class="slotpot_player">{{ player }}</p>
         <p class="slotpot_score">{{ score }}</p>
         <p class="slotpot_player">{{ resultPlayer }}</p>
+        <p>
+            <span v-for="itemImgSlot in imgSlot">
+                {{ itemImgSlot.name }} &nbsp;
+            </span>
+        </p>
+
     </div>
 </template>
 

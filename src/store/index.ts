@@ -7,7 +7,12 @@ const store:StoreOptions<RootState> = {
         stateTitle: "Esto es una prueba con Vuex y Typescript",
         playButtonState: false,
         playerComputer: { name: "Computer", playSlotpot: false, result: "", score: 0 },
-        playerOne: { name: "You", playSlotpot: false, result: "", score: 0 }
+        playerOne: { name: "You", playSlotpot: false, result: "", score: 0 },
+        imgSlot: [
+            {  name: "Tijeras", img: 'bg-imgTijeras' },
+            {  name: "Piedra", img: 'bg-imgPiedra' },
+            {  name: "Papel", img: 'bg-imgPapel' }
+        ],
     },
     mutations: {
         playButton(state) {
@@ -15,24 +20,21 @@ const store:StoreOptions<RootState> = {
         },
         stopButton(state) {
             if((state.playerComputer.playSlotpot) && (state.playerOne.playSlotpot)){
+                console.log('linea 17,  res Player: ' + state.playerOne.playSlotpot + " res Comp: " + state.playerComputer.playSlotpot);
                 state.playButtonState = false;
                 state.playerComputer.playSlotpot = false;
                 state.playerOne.playSlotpot = false;
             }    
         },
-        changePlayStateComputer(state) {
-            state.playerComputer.playSlotpot = true;
-        },
-        changePlayStatePlayer(state) {
-            state.playerOne.playSlotpot = true;
-        },
         changeStateComputer(state, data) {
             state.playerComputer.result = data.result; 
             state.playerComputer.score =  data.score;
+            state.playerComputer.playSlotpot = data.playSlotpot;
         },
         changeStatePlayer(state, data) {
             state.playerOne.result = data.result;  
             state.playerOne.score = data.score; 
+            state.playerOne.playSlotpot = data.playSlotpot;
         }
     },
     actions: {
@@ -42,18 +44,12 @@ const store:StoreOptions<RootState> = {
         stopButtonAction(context) {
             context.commit('stopButton')
         },
-        changePlayStateComputerAction(context) {
-            context.commit('changePlayStateComputer')
-        },
-        changePlayStatePlayerAction(context) {
-            context.commit('changePlayStatePlayer')
-        },
         changeStateComputerAction(context, data) {
             context.commit('changeStateComputer', data)
         },
         changeStatePlayerAction(context, data) {
             context.commit('changeStatePlayer', data)
-        },
+        }
     },
     getters: {
         playButtonState(state) {
@@ -64,6 +60,9 @@ const store:StoreOptions<RootState> = {
         },
         statePlayer(state) {
             return state.playerOne
+        },
+        imgSlot(state){
+            return state.imgSlot
         }
     }
   }
