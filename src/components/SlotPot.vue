@@ -1,16 +1,18 @@
 <script lang="ts">
 
-import { propsToAttrMap } from '@vue/shared';
+import { propsToAttrMap } from '@vue/shared'
 import store from '../store'
 import { defineComponent } from 'vue'
+import type { PropType } from 'vue'
+import { Player } from '../store/types'
+
 
 export default defineComponent({
     data(){
         return  {
             imgSlotDefault: 'bg-imgAvocado',
             imgSlot: [],
-            resultPlayer: "?",
-            score: 0
+            result: "?"
         }
     },
     props: {
@@ -18,7 +20,7 @@ export default defineComponent({
             type:String
         },
         player: {
-            type:String
+            type: Object as PropType<Player>
         }
     },
     setup(props) {
@@ -42,7 +44,7 @@ export default defineComponent({
         moveSlotPot(self: any) {
             let imgSlot: Array<{ img: string, name: string }> =  this.shuffleObjects(self.imgSlot);
             let id: string = self.id;
-            let resultPlayer: string = self.resultPlayer;
+            let result: string = self.result;
             const rollIntervalTime: number = 180;
             let parentImgSlot: HTMLElement | null |any = document.querySelector('#'+ id + ' .slotpot .slotpot_container');
             let currentImgSlot = document.querySelector('#'+ id + ' .slotpot .slotpot_container .slotpot_image.slotpot_image-default') as HTMLElement | null | any;
@@ -71,20 +73,12 @@ export default defineComponent({
                             desplazamientoY += heightSlotpot; 
                         }
                         i = i + 1;
-                        resultPlayer = (i > 0) ? imgSlot[i-1].name: "";
+                        result = (i > 0) ? imgSlot[i-1].name: "";
                         if( i >= imgSlot.length) {
                             i = 0;
                         }
                         if(countImage == (maxCountImage - 1)) {
-                            self.resultPlayer = resultPlayer;
-                            if(store.state.playerComputer.name == self.player ){
-                                store.dispatch('changeStateComputerAction', { "result": self.resultPlayer, "playSlotpot": true });
-                                //console.log('res Comp 90: ' + self.playerComputer.result + " , " + self.playerComputer.playSlotpot);
-                            }
-                            if(store.state.playerOne.name == self.player){
-                                store.dispatch('changeStatePlayerAction', { "result": self.resultPlayer, "playSlotpot": true });
-                                //console.log('res Player 94: ' + self.playerOne.result + " , " + self.playerOne.playSlotpot);
-                            }
+                            store.dispatch('changeStatePlayersAction', { "name": self.player.name, "result": result, "playSlotpot": true });
                             store.dispatch('stopButtonAction');
                         }
                         if (countImage >= maxCountImage ) {
@@ -111,19 +105,8 @@ export default defineComponent({
         self.setSlotPot(self.id);
     },
     computed:{
-        playButtonState: {
-            get(): boolean {
-                return store.state.playButtonState;
-            },
-            set(value: boolean) {
-                store.state.playButtonState = value;
-            }
-        },
-        playerComputer(): any {
-            return  store.state.playerComputer;
-        },
-        playerOne(): any {
-            return  store.state.playerOne;
+        playButtonState(): any {
+            return store.getters.playButtonState
         }
     },
     watch: {
@@ -133,12 +116,6 @@ export default defineComponent({
             if(this.playButtonState){    
                 buttonSlot?.addEventListener('click', self.playSlot());
                 self.cleanSlotPot(self.id);
-                if(store.state.playerOne.name == self.player) {
-                    self.score = store.state.playerOne.score;
-                }
-                if(store.state.playerComputer.name == self.player) {
-                    self.score = store.state.playerComputer.score;
-                }
             }
         }
     }
@@ -154,9 +131,9 @@ export default defineComponent({
             </div>
         </div>
         <button class="hidden" @click="playSlot">Play</button>
-        <p class="slotpot_player">{{ player }}</p>
-        <p class="slotpot_score">{{ score }}</p>
-        <p class="slotpot_player">{{ resultPlayer }}</p>
+        <p class="slotpot_player">{{ player?.name }}</p>
+        <p class="slotpot_player">{{ player?.result }}</p>
+        <p class="slotpot_score">{{ player?.score }} </p>
     </div>
 </template>
 

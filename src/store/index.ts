@@ -14,6 +14,20 @@ const store:StoreOptions<RootState> = {
             {  name: "Paper", img: 'bg-imgPapel' }
         ],
     },
+    getters: {
+        playButtonState(state) {
+            return state.playButtonState
+        },
+        playerComputer(state) {
+            return state.playerComputer
+        },
+        playerOne(state) {
+            return state.playerOne
+        },
+        imgSlot(state){
+            return state.imgSlot
+        }
+    },
     mutations: {
         playButton(state) {
             state.playButtonState = !state.playButtonState;
@@ -25,20 +39,27 @@ const store:StoreOptions<RootState> = {
                 state.playerOne.playSlotpot = false;
             }    
         },
-        changeStateComputer(state, data) {
-            state.playerComputer.result = data.result; 
-            state.playerComputer.playSlotpot = data.playSlotpot;
+        changeStatePlayers(state, data) {
+            if(state.playerComputer.name === data.name ){
+                state.playerComputer.result = data.result; 
+                state.playerComputer.playSlotpot = data.playSlotpot;
+            }
+            if(state.playerOne.name === data.name){
+                state.playerOne.result = data.result;  
+                state.playerOne.playSlotpot = data.playSlotpot;
+            }
         },
-        changeStatePlayer(state, data) {
-            state.playerOne.result = data.result;  
-            state.playerOne.playSlotpot = data.playSlotpot;
-        },
-        addPointToScorePlayer(state){
-            state.playerOne.score++;
-        },
-        addPointToScoreComputer(state){
-            state.playerComputer.score++;
-        },
+        addPointToScore(state, data) {
+            console.log("Antes: ", state.playerComputer.score, " - ", state.playerOne.score);
+            if(state.playerComputer.name === data.player.name ){
+                state.playerComputer.score++;
+                console.log("Aumenta para computer: " + state.playerComputer.score)
+            } else if(state.playerOne.name === data.player.name){
+                state.playerOne.score++;
+                console.log("Aumenta para You: " + state.playerOne.score)
+            }
+            console.log("Despues: ", state.playerComputer.score, " - ", state.playerOne.score);
+        }
     },
     actions: {
         playButtonAction(context) {
@@ -47,31 +68,11 @@ const store:StoreOptions<RootState> = {
         stopButtonAction(context) {
             context.commit('stopButton')
         },
-        changeStateComputerAction(context, data) {
-            context.commit('changeStateComputer', data)
+        changeStatePlayersAction(context, data) {
+            context.commit('changeStatePlayers', data)
         },
-        changeStatePlayerAction(context, data) {
-            context.commit('changeStatePlayer', data)
-        },
-        addPointToScorePlayerAction(context) {
-            context.commit('addPointToScorePlayer')
-        },
-        addPointToScoreComputerAction(context) {
-            context.commit('addPointToScoreComputer')
-        },
-    },
-    getters: {
-        playButtonState(state) {
-            return state.playButtonState
-        },
-        stateComputer(state) {
-            return state.playerComputer
-        },
-        statePlayer(state) {
-            return state.playerOne
-        },
-        imgSlot(state){
-            return state.imgSlot
+        addPointToScoreAction(context, data) {
+            context.commit('addPointToScore', data)
         }
     }
   }

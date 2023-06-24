@@ -1,8 +1,8 @@
-interface Player {
+export interface Player {
     name: string;
     playSlotpot: boolean;
-    result: "";
-    score: 0;
+    result: string;
+    score: number;
 }
 
 interface SlotpotElement {
