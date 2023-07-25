@@ -10,7 +10,7 @@ import { Player } from '../store/types'
 export default defineComponent({
     data(){
         return  {
-            imgSlotDefault: 'bg-imgAvocado',
+            imgSlotDefault: 'bg-imgQuestion',
             imgSlot: [],
             result: "?"
         }
@@ -37,7 +37,7 @@ export default defineComponent({
             let newItemSlot: HTMLElement | null;
             let slotpotHeight: HTMLElement | null  =  document.querySelector('.slotpot');
             if ((currentImgSlot != null) && (currentImgSlot.classList.contains('slotpot_image-default')) && ( slotpotHeight != null )) {
-                currentImgSlot.classList.add('bg-imgAvocado');
+                currentImgSlot.classList.add('bg-imgQuestion');
                 currentImgSlot.setAttribute('style','height: ' + slotpotHeight.offsetHeight + 'px'); 
             }
         },
@@ -132,7 +132,6 @@ export default defineComponent({
         </div>
         <button class="hidden" @click="playSlot">Play</button>
         <p class="slotpot_player">{{ player?.name }}</p>
-        <p class="slotpot_player">{{ player?.result }}</p>
         <p class="slotpot_score">{{ player?.score }} </p>
     </div>
 </template>

@@ -11,7 +11,6 @@ interface SlotpotElement {
 }
 
 export interface RootState {
-    stateTitle: string;
     playButtonState: boolean;
     playerComputer: Player;
     playerOne: Player;

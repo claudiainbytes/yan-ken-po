@@ -16,17 +16,13 @@ export default defineComponent({
     playButton(event: any) {
       event.preventDefault();
       store.dispatch('playButtonAction');
+    },
+    resetButton(event: any) {
+      event.preventDefault();
+      location.reload();
     }
   },
   computed:{
-    stateTitle:{
-      get():string{
-        return store.state.stateTitle;
-      },
-      set(value:string){
-        store.state.stateTitle = value
-      }
-    },
     playButtonState(): any {
         return store.getters.playButtonState
     },
@@ -41,16 +37,16 @@ export default defineComponent({
       if((this.playerComputer.result !== "") && (this.playerOne.result !== "")){
         console.log("Choices: ",this.playerComputer.result, this.playerOne.result);
         if (this.playerComputer.result === this.playerOne.result) {
-          message = "It's a tie!";
+          message = "It's a tie!<br><span>There is not a winner yet</span>";
         } else if ((this.playerOne.result === store.state.imgSlot[1].name && this.playerComputer.result === store.state.imgSlot[0].name) || 
               (this.playerOne.result === store.state.imgSlot[2].name && this.playerComputer.result === store.state.imgSlot[1].name) || 
               (this.playerOne.result === store.state.imgSlot[0].name && this.playerComputer.result === store.state.imgSlot[2].name)
           ){
             store.dispatch('addPointToScoreAction', {"player": this.playerOne });
-            message = `You win! ${this.playerOne.result} beats ${this.playerComputer.result}.`;
+            message = `You win<br><span>${this.playerOne.result} beats ${this.playerComputer.result}</span>`;
           } else {
             store.dispatch('addPointToScoreAction', {"player": this.playerComputer });
-            message = `Computer win! ${this.playerComputer.result} beats ${this.playerOne.result}.`;
+            message = `Computer win<br><span>${this.playerComputer.result} beats ${this.playerOne.result}</span>`;
           } 
       } 
       return message;
@@ -61,20 +57,20 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="w-full h-screen flex flex-col justify-center items-center">
-    <h1>{{stateTitle}}</h1>
-    <h1>Valor propiedad play buton state: {{ playButtonState }}</h1>
-    <p>Result Compu: {{ playerComputer.result }} score: {{ playerComputer.score }}</p>
-    <p>Result Player: {{ playerOne.result }} score: {{ playerOne.score }}</p>
-    <h2 class="text-7xl text-pink-600 font-permanentmarker">{{ appTitle }}</h2>
-    <div class="w-4/5 h-auto flex flex-row justify-center items-center my-20">
+  <div class="w-full h-full flex flex-col justify-center items-center">
+    <h1 class="title">{{ appTitle }}</h1>
+    <p class="subtitle">The classic game of Rock, Paper and Scissors <br><span>by @claudiainbytes</span></p>
+    <div class="h-14"> 
+      <h2 class="game_result" v-html="finalResult"></h2>
+    </div>
+    <div class="w-4/5 h-auto flex flex-row justify-center items-center my-10">
           <SlotPot :player="playerComputer" id="slotpot1"></SlotPot>
         <div class="w-1/3 flex flex-col justify-center items-center">
-          <button class="w-auto px-10 py-2 text-3xl bg-pink-600 rounded-lg text-white font-nunito uppercase" @click="playButton">Play</button>
+          <button class="play_button mb-4" @click="playButton">Play</button>
+          <button class="reset_button" @click="resetButton">Reset</button>
         </div>
           <SlotPot :player="playerOne" id="slotpot2"></SlotPot>
     </div>
-    <h2 class="text-lg text-green-600">{{ finalResult }}</h2>
   </div>
 </template>
 

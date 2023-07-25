@@ -8,8 +8,32 @@
     @apply bg-primary text-white
 }
 
+.app {
+    @apply invisible md:visible w-[768px] h-screen block mx-auto
+}
+
+.title {
+    @apply text-7xl text-pink-600 font-permanentmarker
+}
+
+.subtitle {
+    @apply font-nunito text-xl text-purple-300 my-4 text-center
+}
+
+.subtitle span {
+    @apply text-white
+}
+
+.play_button {
+    @apply w-[106px] py-2 text-2xl bg-pink-600 rounded-lg text-white font-nunito uppercase
+}
+
+.reset_button {
+    @apply w-[106px] py-2 text-2xl bg-pink-300 rounded-lg text-pink-800 font-nunito uppercase
+}
+
 .slotpot {
-    @apply relative w-[220px] h-[220px] flex flex-col justify-end items-center overflow-hidden
+    @apply relative w-[90px] h-[90px] md:w-[120px] md:h-[120px] lg:w-[180px] lg:h-[180px] flex flex-col justify-end items-center overflow-hidden
 } 
 .slotpot_container {
     @apply absolute w-full h-auto flex flex-col justify-end items-center top-0 transition ease-linear
@@ -18,8 +42,16 @@
     @apply w-full h-auto bg-no-repeat bg-center bg-cover 
 }
 .slotpot_player {
-    @apply text-4xl font-permanentmarker text-yellow-300 uppercase mt-5
+    @apply text-3xl font-permanentmarker text-yellow-300 mt-4 lowercase
 }    
 .slotpot_score {
-    @apply text-4xl font-permanentmarker text-blue-300 uppercase mt-5
+    @apply text-4xl font-montserrat text-blue-300 uppercase my-4
 } 
+
+.game_result {
+    @apply text-xl font-nunito text-lime-300 uppercase my-0 text-center
+}
+
+.game_result span {
+    @apply normal-case text-blue-300
+}

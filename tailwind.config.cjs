@@ -15,7 +15,8 @@ module.exports = {
         'imgAvocado': "url('./src/assets/kawaii/avocado.png')",
         'imgPiedra':  "url('./src/assets/kawaii/piedra.png')",
         'imgPapel':   "url('./src/assets/kawaii/papel.png')",
-        'imgTijeras': "url('./src/assets/kawaii/tijeras.png')"
+        'imgTijeras': "url('./src/assets/kawaii/tijeras.png')",
+        'imgQuestion': "url('./src/assets/kawaii/question-svgrepo-com.png')"
 	    },
       backgroundColor: theme =>({
           'primary': '#242424',

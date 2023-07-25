@@ -4,7 +4,6 @@ import { RootState } from './types';
 
 const store:StoreOptions<RootState> = {
     state: {
-        stateTitle: "Esto es una prueba con Vuex y Typescript",
         playButtonState: false,
         playerComputer: { name: "Computer", playSlotpot: false, result: "", score: 0 },
         playerOne: { name: "You", playSlotpot: false, result: "", score: 0 },
